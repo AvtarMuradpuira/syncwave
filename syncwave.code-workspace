@@ -1,0 +1,62 @@
+{
+  "folders": [
+    { "path": "." }
+  ],
+  "settings": {
+    "files.exclude": { "data": false, "node_modules": true },
+    "search.exclude": { "data": true, "node_modules": true },
+    "editor.tabSize": 2,
+    "files.eol": "\n",
+    "terminal.integrated.env.windows": { "PORT": "8080" }
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "SyncWave: run server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/server.js",
+        "runtimeArgs": ["--no-warnings"],
+        "env": { "PORT": "8080" },
+        "console": "integratedTerminal",
+        "serverReadyAction": {
+          "pattern": "listening on (http://localhost:[0-9]+)",
+          "uriFormat": "%s",
+          "action": "openExternally"
+        }
+      },
+      {
+        "name": "SyncWave: run tests",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/test/smoke.js",
+        "runtimeArgs": ["--no-warnings"],
+        "console": "integratedTerminal"
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "SyncWave: start",
+        "type": "shell",
+        "command": "npm start",
+        "isBackground": true,
+        "problemMatcher": {
+          "owner": "syncwave",
+          "pattern": { "regexp": "^__never__$" },
+          "background": { "activesBegin": ".", "beginsPattern": "^.", "endsPattern": "listening on" }
+        },
+        "group": { "kind": "build", "isDefault": true }
+      },
+      {
+        "label": "SyncWave: test",
+        "type": "shell",
+        "command": "npm test",
+        "group": { "kind": "test", "isDefault": true }
+      }
+    ]
+  }
+}

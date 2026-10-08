@@ -1,0 +1,19 @@
+{
+  "name": "syncwave",
+  "version": "0.1.0",
+  "description": "Synchronized multi-device audio playback with channel roles (stereo, 2.1, 5.1, 7.1), shared queue, suggestions and session history.",
+  "type": "module",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "dev": "node --no-warnings --watch server.js",
+    "test": "node --no-warnings test/calibration.js && node --no-warnings test/smoke.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "optionalDependencies": {
+    "music-metadata": "^11.0.0"
+  }
+}

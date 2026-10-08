@@ -1,0 +1,6 @@
+* text=auto
+# shell scripts and service files must keep LF to run on Linux; batch files want CRLF
+*.sh text eol=lf
+*.service text eol=lf
+Dockerfile text eol=lf
+*.bat text eol=crlf

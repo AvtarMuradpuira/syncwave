@@ -1,0 +1,26 @@
+# systemd unit for SyncWave.
+# 1. Unpack the app to /opt/syncwave and create a user:  sudo useradd --system --home /opt/syncwave syncwave
+# 2. sudo mkdir -p /var/lib/syncwave && sudo chown syncwave: /var/lib/syncwave
+# 3. sudo cp deploy/syncwave.service /etc/systemd/system/ && sudo systemctl enable --now syncwave
+# Logs: journalctl -u syncwave -f
+
+[Unit]
+Description=SyncWave synchronized audio server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=syncwave
+WorkingDirectory=/opt/syncwave
+ExecStart=/usr/bin/env node --no-warnings server.js
+Environment=PORT=8080
+Environment=HOST=0.0.0.0
+Environment=DATA_DIR=/var/lib/syncwave
+# Environment=MAX_UPLOAD_MB=500
+# Environment=JAMENDO_CLIENT_ID=
+# Environment=YOUTUBE_API_KEY=
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

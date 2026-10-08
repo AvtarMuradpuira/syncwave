@@ -1,0 +1,6 @@
+node_modules/
+data/
+# local settings may hold API keys (see deploy/env.example)
+.env
+*.log
+*.zip

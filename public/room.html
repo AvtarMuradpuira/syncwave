@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101214">
+  <title>SyncWave session</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="room">
+  <header class="topbar">
+    <a href="/" class="brand" aria-label="SyncWave home"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="/icon.svg#mark"/></svg><span>SyncWave</span></a>
+    <div class="room-title">
+      <h1 id="room-name">Session</h1>
+      <button class="chip code" id="room-code" data-act="share" title="Share this session"></button>
+    </div>
+    <div class="top-right">
+      <span class="pill" id="sync-pill" title="Estimated sync error on this device">syncing…</span>
+      <span class="pill host" id="host-badge" hidden>Host</span>
+      <button class="btn primary sm share-btn" data-act="share" aria-haspopup="dialog" title="Share session: QR code, code and link">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M18 16a3 3 0 0 0-2.2 1l-7-4.1a3 3 0 0 0 0-1.8l7-4A3 3 0 1 0 15 5a3 3 0 0 0 .1.8l-7 4a3 3 0 1 0 0 4.4l7 4.1a3 3 0 0 0-.1.7 3 3 0 1 0 3-3z"/></svg><span>Share</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="sidenav" id="sidenav" aria-label="Session menu"></nav>
+
+    <div class="stage">
+      <main class="canvas" aria-label="Now playing">
+        <div class="player">
+          <div class="np-art" id="np-art"><div class="art-gen" id="art-gen"></div><div class="yt" id="yt" hidden></div></div>
+          <div class="np-meta">
+            <span class="badge" id="np-source"></span>
+            <h2 id="np-title">Nothing playing</h2>
+            <p id="np-artist" class="muted">Add something to the queue to start.</p>
+          </div>
+          <div class="progress">
+            <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Seek" disabled>
+            <div class="times"><span id="t-pos">0:00</span><span id="np-status" class="muted"></span><span id="t-dur">0:00</span></div>
+          </div>
+          <div class="transport" id="transport">
+            <button class="ctl" data-act="ctl" data-op="prev" title="Previous / restart" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+            <button class="ctl" data-act="ctl" data-op="seekBy" data-delta="-10" title="Back 10 s" aria-label="Back 10 seconds"><svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/><text x="12" y="16.5" text-anchor="middle" font-size="6.5" font-weight="700">10</text></svg></button>
+            <button class="ctl big" data-act="ctl" data-op="toggle" id="btn-play" aria-label="Play"><svg viewBox="0 0 24 24" id="ico-play"><path d="M8 5v14l11-7z"/></svg></button>
+            <button class="ctl" data-act="ctl" data-op="seekBy" data-delta="10" title="Forward 10 s" aria-label="Forward 10 seconds"><svg viewBox="0 0 24 24"><path d="M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/><text x="12" y="16.5" text-anchor="middle" font-size="6.5" font-weight="700">10</text></svg></button>
+            <button class="ctl" data-act="ctl" data-op="next" title="Next" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+          </div>
+          <p class="listener-note muted" id="listener-note" hidden>The host controls playback. Suggest tracks from <b>Suggest</b>, and tune this speaker under <b>Device</b>.</p>
+        </div>
+      </main>
+
+      <div class="overlay modal-wrap" id="modal" hidden>
+        <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <header class="modal-head">
+            <div class="modal-heading"><h2 id="modal-title"></h2><span class="modal-step" id="modal-step"></span></div>
+            <button class="icon-btn" id="modal-close" data-act="modal-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg></button>
+          </header>
+          <div class="modal-body" id="tab-body"></div>
+          <footer class="modal-foot" id="modal-foot" hidden></footer>
+        </section>
+      </div>
+
+      <div class="overlay modal-wrap sub-wrap" id="sub" hidden>
+        <section class="modal" role="dialog" aria-modal="true" aria-labelledby="sub-title">
+          <header class="modal-head">
+            <h2 id="sub-title"></h2>
+            <button class="icon-btn" id="sub-close" data-act="sub-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg></button>
+          </header>
+          <div class="modal-body" id="sub-body"></div>
+        </section>
+      </div>    </div>
+  </div>
+
+  <div class="more-menu" id="more-menu" role="menu" hidden></div>
+  <div class="req-pop" id="req-pop" aria-live="polite"></div>
+  <button class="sound-hint" id="sound-hint" hidden>Tap anywhere to turn sound on</button>
+
+  <div class="overlay" id="join">
+    <form class="join-card" id="join-form">
+      <svg class="join-mark" viewBox="0 0 32 32" aria-hidden="true"><use href="/icon.svg#mark"/></svg>
+      <h2 id="join-title">Join session</h2>
+      <p class="muted">Each phone, laptop or speaker joins as one output. Name it so the host can tell them apart.</p>
+      <label class="field"><span>Device name</span><input id="join-name" maxlength="40" placeholder="e.g. Kitchen speaker" required></label>
+      <button class="btn primary wide" type="submit" id="join-btn" disabled>Join with sound</button>
+      <p class="tiny muted">Browsers need one tap before they can play audio.</p>
+    </form>
+  </div>
+
+  <div class="drop-hint" aria-hidden="true">Drop audio files or links to add them</div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
