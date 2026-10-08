@@ -3,14 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#101214">
+  <meta name="theme-color" content="#050818">
   <title>SyncWave session</title>
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="/brand/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/brand/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body class="room">
   <header class="topbar">
-    <a href="/" class="brand" aria-label="SyncWave home"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="/icon.svg#mark"/></svg><span>SyncWave</span></a>
+    <a href="/" class="brand" aria-label="SyncWave home"><img src="/brand/icon-192.webp" alt="" width="30" height="30"><span>SyncWave</span></a>
     <div class="room-title">
       <h1 id="room-name">Session</h1>
       <button class="chip code" id="room-code" data-act="share" title="Share this session"></button>
@@ -79,7 +82,7 @@
 
   <div class="overlay" id="join">
     <form class="join-card" id="join-form">
-      <svg class="join-mark" viewBox="0 0 32 32" aria-hidden="true"><use href="/icon.svg#mark"/></svg>
+      <img class="join-mark" src="/brand/icon-192.webp" alt="" width="56" height="56">
       <h2 id="join-title">Join session</h2>
       <p class="muted">Each phone, laptop or speaker joins as one output. Name it so the host can tell them apart.</p>
       <label class="field"><span>Device name</span><input id="join-name" maxlength="40" placeholder="e.g. Kitchen speaker" required></label>

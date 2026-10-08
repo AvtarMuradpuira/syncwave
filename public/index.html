@@ -3,48 +3,117 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#101214">
+  <meta name="theme-color" content="#050818">
   <title>SyncWave</title>
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <meta name="description" content="Play music in sync on every phone, laptop and speaker.">
+  <meta property="og:title" content="SyncWave: play together">
+  <meta property="og:description" content="Play music in sync on every phone, laptop and speaker.">
+  <meta property="og:image" content="/brand/social.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/brand/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/brand/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="home-page">
   <header class="topbar">
-    <a href="/" class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="/icon.svg#mark"/></svg><span>SyncWave</span></a>
+    <a href="/" class="brand"><img src="/brand/icon-192.webp" alt="" width="30" height="30"><span>SyncWave</span></a>
+    <span class="grow-x"></span>
+    <button class="btn ghost guide-btn" type="button" data-open="guide">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 15.5a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Zm1.3-5.1c-.6.4-.8.6-.8 1.1v.4h-2v-.5c0-1.3.7-1.9 1.4-2.4.6-.4.9-.7.9-1.2 0-.7-.6-1.1-1.3-1.1-.8 0-1.4.5-1.5 1.3l-2-.2C8.2 8.1 9.8 6.8 12 6.8c2.1 0 3.6 1.2 3.6 2.9 0 1.3-.8 2-2.3 2.7Z"/></svg>
+      Guide
+    </button>
   </header>
+
   <main class="home">
-    <section class="hero">
-      <h1>Every device. One sound.</h1>
-      <p>Turn phones, laptops and speakers into one synchronized system. Assign each one a channel (left, right, center, subwoofer, surrounds) and play from a shared queue that everyone can add to.</p>
-    </section>
-
-    <div class="cards">
-      <form class="card" id="create">
-        <h2>Start a session</h2>
-        <p class="muted">You'll be the host: you control playback, the queue and speaker roles.</p>
-        <label class="field"><span>Session name</span><input name="name" maxlength="60" placeholder="Friday night" required></label>
-        <button class="btn primary wide">Create session</button>
-      </form>
-      <form class="card" id="join">
-        <h2>Join a session</h2>
-        <p class="muted">Enter the 6-character code from the host's screen, or open their link.</p>
-        <label class="field"><span>Session code</span><input name="code" maxlength="64" placeholder="abc234" autocapitalize="off" autocomplete="off" spellcheck="false" required class="num"></label>
-        <button class="btn wide">Join</button>
-      </form>
+    <div class="home-hero">
+      <img class="home-mark" src="/brand/icon-512.webp" alt="" width="150" height="150">
+      <h1><img class="home-word" src="/brand/wordmark.webp" alt="SyncWave" width="470" height="86"></h1>
+      <div class="home-tag">Play together</div>
+      <p class="muted">Play music in sync on every phone, laptop and speaker.</p>
     </div>
-
-    <section class="sessions" id="sessions" hidden>
-      <h2>Your sessions</h2>
-      <div id="session-list"></div>
-    </section>
-
-    <section class="feat">
-      <div><h3>Sample-scheduled sync</h3><p>Devices share a clock over WebSocket and start every track on the same audio-clock instant, then hold it there with tiny rate corrections.</p></div>
-      <div><h3>Surround from any device</h3><p>Stereo, mono, L/R, center, LFE and surrounds for 2.1, 5.1 and 7.1. Multichannel files keep their channels; stereo files are upmixed.</p></div>
-      <div><h3>Shared queue</h3><p>Upload files, paste links, browse podcasts, Archive.org and Jamendo, or add YouTube videos. Listeners suggest and vote.</p></div>
-      <div><h3>Sessions that last</h3><p>Queue, history, devices and playlists are saved, so you can pick up where you left off.</p></div>
-    </section>
+    <div class="home-actions">
+      <button class="btn primary big" type="button" data-open="create">Host a room</button>
+      <button class="btn big" type="button" data-open="join">Join a room</button>
+    </div>
   </main>
+
+  <!-- host a room -->
+  <div class="overlay" data-sheet="create" hidden>
+    <form class="card sheet" id="create" role="dialog" aria-modal="true" aria-labelledby="create-title">
+      <div class="sheet-head"><h2 id="create-title">Host a room</h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7l-1.4-1.4L9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/></svg></button></div>
+      <p class="muted">You control playback, the queue and speaker roles.</p>
+      <label class="field"><span>Room name</span><input name="name" maxlength="60" placeholder="Friday night" required></label>
+      <button class="btn primary wide">Create room</button>
+    </form>
+  </div>
+
+  <!-- join a room -->
+  <div class="overlay" data-sheet="join" hidden>
+    <div class="card sheet" role="dialog" aria-modal="true" aria-labelledby="join-title">
+      <div class="sheet-head"><h2 id="join-title">Join a room</h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7l-1.4-1.4L9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/></svg></button></div>
+      <form id="join">
+        <label class="field"><span>Room code or link</span><input name="code" maxlength="200" placeholder="abc234" autocapitalize="off" autocomplete="off" spellcheck="false" required class="num"></label>
+        <button class="btn primary wide">Join</button>
+      </form>
+      <section class="sessions" id="sessions" hidden>
+        <h3>Your rooms</h3>
+        <div id="session-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- guide: one step at a time -->
+  <div class="overlay" data-sheet="guide" hidden>
+    <div class="card sheet guide" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+      <div class="sheet-head"><h2 id="guide-title">Guide <span class="g-count num" id="g-count"></span></h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7l-1.4-1.4L9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/></svg></button></div>
+      <div class="g-steps">
+        <section class="g-step">
+          <div class="g-icon">🔊</div>
+          <h3>What SyncWave does</h3>
+          <p>It turns phones, laptops and speakers into one synchronized sound system. Every device plays the same queue at the same moment, and each one can play its own channel: left, right, center, subwoofer or surrounds.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">🏠</div>
+          <h3>1. Host a room</h3>
+          <p>On the device that will control the music, tap <b>Host a room</b> and give it a name. As the host you control play, pause, skipping, the queue and every speaker. The host link is saved on this device, so you can come back to it.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">📲</div>
+          <h3>2. Invite devices</h3>
+          <p>In the room, tap <b>Share</b> to show a QR code, the 6-character room code and the link. On every other device, scan the QR code or tap <b>Join a room</b> and type the code.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">👆</div>
+          <h3>3. Join with sound</h3>
+          <p>Each device taps <b>Join with sound</b> once (browsers need a tap before they play audio). Keep the page open: phones may pause audio when the screen locks.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">🎛️</div>
+          <h3>4. Set up the speakers</h3>
+          <p>Open <b>Speakers</b> to see the room map. Pick a layout (2.0, 2.1, 3.1, 5.1 or 7.1) and assign each device a role, or use auto-assign. <b>Calibrate</b> uses the host's microphone to line every speaker up, including Bluetooth delay.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">🎵</div>
+          <h3>5. Add music</h3>
+          <p>Upload files, paste links, or search podcasts, Archive.org, Audius, Jamendo and YouTube. Listeners can preview a song and send a request; only the host sees it and approves or rejects it.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">💾</div>
+          <h3>6. Pick up later</h3>
+          <p>The queue, play history, speakers and playlists are saved. Reopen a room from <b>Join a room → Your rooms</b>, or reload the page: you go straight back in.</p>
+        </section>
+      </div>
+      <div class="g-foot">
+        <button class="btn" type="button" id="g-back">Back</button>
+        <div class="g-dots" id="g-dots" aria-hidden="true"></div>
+        <button class="btn primary" type="button" id="g-next">Next</button>
+        <button class="btn primary" type="button" id="g-host" data-open="create" hidden>Host a room</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/js/home.js"></script>
 </body>
 </html>
