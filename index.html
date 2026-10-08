@@ -3,85 +3,95 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050818">
 <title>SyncWave</title>
 <meta name="description" content="Choose which SyncWave server to open: the PHP edition or the Node.js edition.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233ddc97'/%3E%3Cpath d='M5 16h3l2-6 3 12 3-15 3 18 3-12 2 3h3' fill='none' stroke='%2306261a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta property="og:title" content="SyncWave">
+<meta property="og:description" content="Choose which SyncWave server to open: the PHP edition or the Node.js edition.">
+<meta property="og:image" content="public/brand/social.jpg">
+<link rel="icon" href="public/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="public/brand/favicon-64.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="public/brand/apple-touch-icon.png">
 <style>
-  /* Start page: pick the PHP edition (this host) or the Node.js edition (Render). */
   :root {
-    --bg: #f4f3ef; --surface: #ffffff; --text: #17191c; --muted: #646a72; --line: #d9d6cc;
-    --accent: #0b7a5f; --accent-ink: #ffffff; --accent-soft: #d5efe5;
-    --shadow: 0 1px 2px rgb(0 0 0 / .06), 0 8px 24px rgb(0 0 0 / .06);
-    color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0e1012; --surface: #16191c; --text: #e8ebee; --muted: #8e959d; --line: #2a3036;
-      --accent: #3ddc97; --accent-ink: #06261a; --accent-soft: #143528;
-      --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0e1012; --surface: #16191c; --text: #e8ebee; --muted: #8e959d; --line: #2a3036;
-    --accent: #3ddc97; --accent-ink: #06261a; --accent-soft: #143528;
-    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
+    --bg: #050818;
+    --surface: #0f1328;
+    --text: #eef0ff;
+    --muted: #9aa0c4;
+    --line: #262c50;
+    --accent: #8f7cff;
+    --brand-grad: linear-gradient(100deg, #1f8fff 0%, #5b3df5 50%, #c026d3 100%);
     color-scheme: dark;
   }
   * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
+  html, body { margin: 0; min-height: 100%; }
   body {
-    background: var(--bg); color: var(--text);
-    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    display: grid; place-items: center; padding: 24px 16px;
+    color: var(--text);
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(60vmax 45vmax at 12% 18%, rgb(34 211 238 / .13), transparent 60%),
+      radial-gradient(55vmax 45vmax at 88% 30%, rgb(217 70 239 / .14), transparent 60%),
+      radial-gradient(70vmax 50vmax at 50% 105%, rgb(91 61 245 / .22), transparent 60%),
+      var(--bg);
   }
-  main { width: 100%; max-width: 720px; }
-  header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  header svg { width: 40px; height: 40px; flex: none; }
-  h1 { font-size: 28px; line-height: 1.2; margin: 0; letter-spacing: -.01em; }
-  .lead { color: var(--muted); margin: 0 0 24px; }
-  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  main {
+    min-height: 100vh; min-height: 100dvh;
+    display: grid; align-content: center; justify-items: center;
+    gap: clamp(22px, 4vh, 40px);
+    padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    text-align: center;
+  }
+  .hero { display: grid; justify-items: center; gap: 10px; }
+  .mark {
+    width: clamp(84px, 18vh, 128px); height: auto; aspect-ratio: 1; border-radius: 24%;
+    box-shadow: 0 0 60px rgb(91 61 245 / .45), 0 0 120px rgb(217 70 239 / .18);
+  }
+  h1 { margin: 6px 0 0; }
+  .word { width: min(300px, 74vw); height: auto; display: block; }
+  .tag { font-size: 12px; letter-spacing: .42em; text-transform: uppercase; color: #c3c8ec; margin-right: -.42em; }
+  .lead { margin: 0; color: var(--muted); max-width: 36ch; font-size: 15px; }
+  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; width: min(680px, 100%); }
   .choice {
-    display: flex; flex-direction: column; gap: 8px; padding: 20px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
-    box-shadow: var(--shadow); color: inherit; text-decoration: none;
-    transition: border-color .15s, transform .15s;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
+    padding: 18px 18px 16px; border-radius: 18px; text-decoration: none; color: inherit;
+    background: rgb(255 255 255 / .04); border: 1px solid rgb(255 255 255 / .12);
+    transition: border-color .15s, transform .15s, background .15s;
   }
-  .choice:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .choice:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-  .tag {
-    align-self: flex-start; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
-    color: var(--accent); background: var(--accent-soft); padding: 2px 10px; border-radius: 99px;
+  .choice:hover { border-color: var(--accent); background: rgb(255 255 255 / .07); transform: translateY(-2px); }
+  .choice:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .tag-pill {
+    font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase;
+    color: #fff; background: var(--brand-grad); padding: 3px 10px; border-radius: 99px;
   }
-  .choice h2 { font-size: 20px; margin: 4px 0 0; }
-  .choice p { margin: 0; color: var(--muted); font-size: 15px; }
-  .choice .go {
-    margin-top: auto; padding-top: 12px; display: inline-flex; align-items: center; justify-content: center;
-    min-height: 44px; border-radius: 99px; background: var(--accent); color: var(--accent-ink); font-weight: 600;
+  .choice h2 { font-size: 20px; margin: 2px 0 0; letter-spacing: -.01em; }
+  .choice p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .go {
+    margin-top: 8px; min-height: 44px; width: 100%; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 12px; background: var(--brand-grad); color: #fff; font-weight: 650;
+    box-shadow: 0 8px 30px rgb(91 61 245 / .35);
   }
-  .note { color: var(--muted); font-size: 14px; margin: 20px 0 0; text-align: center; }
+  .note { margin: 0; color: var(--muted); font-size: 13px; max-width: 52ch; }
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <svg viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="8" fill="#3ddc97"/>
-      <path d="M5 16h3l2-6 3 12 3-15 3 18 3-12 2 3h3" fill="none" stroke="#06261a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <h1>SyncWave</h1>
-  </header>
-  <p class="lead">Synchronized audio across phones, laptops and speakers. Choose which server to use.</p>
+  <div class="hero">
+    <img class="mark" src="public/brand/icon-512.webp" alt="" width="128" height="128">
+    <h1><img class="word" src="public/brand/wordmark.webp" alt="SyncWave" width="470" height="86"></h1>
+    <div class="tag">Play together</div>
+    <p class="lead">Synchronized audio across phones, laptops and speakers. Choose which server to use.</p>
+  </div>
 
   <div class="choices">
     <a class="choice" href="php/">
-      <span class="tag">PHP</span>
+      <span class="tag-pill">PHP</span>
       <h2>PHP edition</h2>
       <p>Runs on this website's PHP hosting. Devices update about once a second.</p>
       <span class="go">Open PHP app</span>
     </a>
     <a class="choice" href="https://syncwave-7lwo.onrender.com/r/gvd5vu">
-      <span class="tag">Node.js</span>
+      <span class="tag-pill">Node.js</span>
       <h2>Node.js edition</h2>
       <p>Runs on Render with live WebSocket updates for the tightest sync.</p>
       <span class="go">Open Node.js app</span>
