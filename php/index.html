@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101214">
+  <title>SyncWave</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="./" class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="icon.svg#mark"/></svg><span>SyncWave</span></a>
+  </header>
+  <main class="home">
+    <section class="hero">
+      <h1>Every device. One sound.</h1>
+      <p>Turn phones, laptops and speakers into one synchronized system. Assign each one a channel (left, right, center, subwoofer, surrounds) and play from a shared queue that everyone can add to.</p>
+    </section>
+
+    <div class="cards">
+      <form class="card" id="create">
+        <h2>Start a session</h2>
+        <p class="muted">You'll be the host: you control playback, the queue and speaker roles.</p>
+        <label class="field"><span>Session name</span><input name="name" maxlength="60" placeholder="Friday night" required></label>
+        <button class="btn primary wide">Create session</button>
+      </form>
+      <form class="card" id="join">
+        <h2>Join a session</h2>
+        <p class="muted">Enter the 6-character code from the host's screen, or open their link.</p>
+        <label class="field"><span>Session code</span><input name="code" maxlength="64" placeholder="abc234" autocapitalize="off" autocomplete="off" spellcheck="false" required class="num"></label>
+        <button class="btn wide">Join</button>
+      </form>
+    </div>
+
+    <section class="sessions" id="sessions" hidden>
+      <h2>Your sessions</h2>
+      <div id="session-list"></div>
+    </section>
+
+    <section class="feat">
+      <div><h3>Sample-scheduled sync</h3><p>Devices share a clock over WebSocket and start every track on the same audio-clock instant, then hold it there with tiny rate corrections.</p></div>
+      <div><h3>Surround from any device</h3><p>Stereo, mono, L/R, center, LFE and surrounds for 2.1, 5.1 and 7.1. Multichannel files keep their channels; stereo files are upmixed.</p></div>
+      <div><h3>Shared queue</h3><p>Upload files, paste links, browse podcasts, Archive.org and Jamendo, or add YouTube videos. Listeners suggest and vote.</p></div>
+      <div><h3>Sessions that last</h3><p>Queue, history, devices and playlists are saved, so you can pick up where you left off.</p></div>
+    </section>
+  </main>
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>

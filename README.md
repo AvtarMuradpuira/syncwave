@@ -15,6 +15,8 @@ Requires **Node.js 22.5 or newer**. There are no required dependencies.
 
 Putting it on a server (Linux script, systemd service, Docker, nginx/Caddy, backups): see [deploy/DEPLOY.md](deploy/DEPLOY.md).
 
+No Node.js on your host? The [`php/`](php/) folder is a PHP + SQLite edition of the same app for ordinary PHP hosting (polling instead of WebSockets). See [php/README.md](php/README.md).
+
 ```bash
 npm start            # http://localhost:8080
 ```

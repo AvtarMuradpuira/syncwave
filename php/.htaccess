@@ -1,0 +1,22 @@
+# SyncWave (PHP). No URL rewriting is needed; this only hardens the folder.
+Options -Indexes
+<FilesMatch "^(config\.php|.*\.md|\.user\.ini)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+# Big uploads where PHP runs as an Apache module (PHP-FPM hosts use .user.ini instead)
+<IfModule mod_php.c>
+  php_value upload_max_filesize 500M
+  php_value post_max_size 500M
+  php_value max_execution_time 300
+</IfModule>
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 500M
+  php_value post_max_size 500M
+  php_value max_execution_time 300
+</IfModule>

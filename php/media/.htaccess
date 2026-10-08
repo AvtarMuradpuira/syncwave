@@ -1,0 +1,26 @@
+# Audio files only: serve them, never run anything from this folder.
+Options -Indexes
+<FilesMatch "\.(php|phtml|php\d|phar|cgi|pl|py|sh|htm|html|svg|js)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_mime.c>
+  AddType audio/mpeg .mp3
+  AddType audio/mp4 .m4a .mp4
+  AddType audio/aac .aac
+  AddType audio/ogg .ogg .oga .opus
+  AddType audio/flac .flac
+  AddType audio/wav .wav
+  AddType audio/webm .webm
+</IfModule>
