@@ -1,9 +1,9 @@
-import { Clock } from './clock.js';
-import { Engine, ROLES, ROLE_LABEL, ROLE_SHORT } from './engine.js';
-import { YouTubeSync } from './youtube.js';
-import { MicRecorder, analyzeRun } from './calib.js';
-import { qrSVG } from './qr.js';
-import { PollSocket } from './poll.js';
+import { Clock } from './clock.js?v=20261009063528';
+import { Engine, ROLES, ROLE_LABEL, ROLE_SHORT } from './engine.js?v=20261009063528';
+import { YouTubeSync } from './youtube.js?v=20261009063528';
+import { MicRecorder, analyzeRun } from './calib.js?v=20261009063528';
+import { qrSVG } from './qr.js?v=20261009063528';
+import { PollSocket } from './poll.js?v=20261009063528';
 
 // ---------- helpers ----------
 const $ = (s, el = document) => el.querySelector(s);

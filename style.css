@@ -537,6 +537,11 @@ body.home-page .overlay { background: rgb(5 8 24 / .55); }
 .g-dots { flex: 1; display: flex; justify-content: center; gap: 6px; }
 .g-dots i { width: 7px; height: 7px; border-radius: 4px; background: var(--line); transition: width .2s, background .2s; }
 .g-dots i.on { width: 18px; background: var(--accent); }
+@media (max-width: 380px) { /* small phones: the step count in the title is enough */
+  .g-dots { display: none; }
+  .g-foot .btn { min-width: 0; flex: 1; }
+  .guide { padding: 16px; }
+}
 
 /* calibration */
 .cal { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin: 0 0 18px; display: grid; gap: 12px; background: var(--surface-2); }

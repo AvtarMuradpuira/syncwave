@@ -1,7 +1,7 @@
 // Audio engine: schedules playback on the Web Audio clock so every device starts the
 // same sample at the same server instant, keeps it there with tiny playback-rate
 // nudges, and routes the chosen channel (L, R, C, LFE, surrounds...) to this device.
-import { makeChirp } from './calib.js';
+import { makeChirp } from './calib.js?v=20261009063528';
 
 export const ROLES = ['stereo', 'mono', 'left', 'right', 'center', 'lfe', 'surround-left', 'surround-right', 'rear-left', 'rear-right'];
 export const ROLE_LABEL = {

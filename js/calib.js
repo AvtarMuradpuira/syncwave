@@ -98,7 +98,7 @@ export class MicRecorder {
     this.stream = await navigator.mediaDevices.getUserMedia({
       audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
     });
-    if (!MicRecorder.loaded) { await ctx.audioWorklet.addModule(new URL('./recorder-worklet.js', import.meta.url).href); MicRecorder.loaded = true; }
+    if (!MicRecorder.loaded) { await ctx.audioWorklet.addModule(new URL('./recorder-worklet.js?v=20261009063528', import.meta.url).href); MicRecorder.loaded = true; }
     this.ctx = ctx;
     this.sr = ctx.sampleRate;
     this.chunks = [];

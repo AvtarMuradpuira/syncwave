@@ -18,6 +18,8 @@ The earlier Node.js version (WebSocket server) is kept in the git tag [`node-edi
 
 Optional: edit `config.php` for the upload limit and the Jamendo / YouTube search keys.
 
+**After changing any file, run `php stamp.php` before uploading.** It gives every CSS/JS link a new `?v=` number. Without it, browsers and CDNs (such as Hostinger's) can keep serving the old CSS and JS for days, which breaks the layout.
+
 Rooms open as `room.html?r=CODE`. Share links and QR codes in the app already use that form.
 
 ## How it differs from the Node.js version
@@ -61,6 +63,7 @@ style.css, js/   front end (js/poll.js is the live connection)
 brand/           logo, app icons, social image (used by the pages)
 assets/img/      original brand pack: logos, icons, social and wallpaper images
 manifest.webmanifest   lets phones install it like an app
+stamp.php        run before uploading changes (cache-busting version numbers)
 api.php          all API routes:  api.php?p=/rooms/CODE/...
 inc/             database, room logic, media sources, audio probing
 config.php       settings
