@@ -118,7 +118,7 @@ on('POST', '/rooms/:id/work', function ($p) {
 
 on('GET', '/config', fn() => [
     'jamendo' => (bool)cfg('JAMENDO_CLIENT_ID'),
-    'youtubeSearch' => (bool)cfg('YOUTUBE_API_KEY'),
+    'youtubeSearch' => true, // works without a key; YOUTUBE_API_KEY switches to the official API
     'maxUploadMb' => (int)floor(max_upload_bytes() / 1048576),
     'fullProbe' => false,
     'roles' => ROLES,

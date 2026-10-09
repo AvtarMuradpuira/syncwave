@@ -1,9 +1,10 @@
-import { Clock } from './clock.js?v=20261009063528';
-import { Engine, ROLES, ROLE_LABEL, ROLE_SHORT } from './engine.js?v=20261009063528';
-import { YouTubeSync } from './youtube.js?v=20261009063528';
-import { MicRecorder, analyzeRun } from './calib.js?v=20261009063528';
-import { qrSVG } from './qr.js?v=20261009063528';
-import { PollSocket } from './poll.js?v=20261009063528';
+import { Clock } from './clock.js?v=20261009064805';
+import { Engine, ROLES, ROLE_LABEL, ROLE_SHORT } from './engine.js?v=20261009064805';
+import { YouTubeSync, ytThumb } from './youtube.js?v=20261009064805';
+import { VideoSync, isVideoTrack } from './video.js?v=20261009064805';
+import { MicRecorder, analyzeRun } from './calib.js?v=20261009064805';
+import { qrSVG } from './qr.js?v=20261009064805';
+import { PollSocket } from './poll.js?v=20261009064805';
 
 // ---------- helpers ----------
 const $ = (s, el = document) => el.querySelector(s);
@@ -86,7 +87,7 @@ let localEditAt = 0;
 let seeking = false;
 let deferred = false;
 const pendingPatch = new Map(), patchTimers = new Map();
-const addS = { mode: 'end', note: '', input: '', results: null, loading: false, msg: '', archiveItem: null, uploads: [], done: new Set() };
+const addS = { mode: 'end', note: '', input: '', results: null, src: 'all', loading: false, msg: '', archiveItem: null, uploads: [], done: new Set() };
 
 // ---------- network ----------
 let ws = null, wsOpen = false;
@@ -101,9 +102,17 @@ const yt = new YouTubeSync($('#yt'), clock, engine, {
     const t = S?.playback.track;
     if ([100, 101, 150].includes(code) && t?.kind === 'youtube' && t.url === vid) send({ t: 'yterr', trackId: t.id, code });
   },
+  // tapping the video works like the room's play/pause button (host only)
+  onTap: () => { if (isAdmin && joined) $('#btn-play').click(); },
 });
+const vid = new VideoSync($('#vid'), clock, engine);
 engine.onMeta = (trackId, duration, channels) => send({ t: 'meta', trackId, duration, channels });
-engine.onStatus = (msg) => { if (typeof msg === 'string') toast(msg, true); checkAudio(); };
+engine.onStatus = (msg) => {
+  // a video file without a sound track: nothing to hear, the picture still plays
+  const silentVideo = isVideoTrack(S?.playback.track) && /decode/i.test(String(msg));
+  if (typeof msg === 'string' && !silentVideo) toast(msg, true);
+  checkAudio();
+};
 
 function hdrs(h = {}) {
   h['x-device-id'] = deviceId;
@@ -165,6 +174,7 @@ function onState(m) {
   if (pv.key) duck(true);
   engine.apply(S.playback);
   yt.apply(S.playback);
+  vid.apply(S.playback);
   const q = S.queue, ci = q.findIndex((i) => i.id === S.playback.itemId);
   const nxt = q.slice(ci + 1).find((i) => i.track.status === 'ready');
   if (nxt) engine.prefetch(nxt.track);
@@ -214,6 +224,7 @@ function renderNP() {
 
 function hashStr(s) { let h = 2166136261; for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; }
 function artHTML(t) {
+  if (t?.kind === 'youtube') return `<div class="art-gen yt-thumb" id="art-gen" style="background-image:url('${esc(ytThumb(t.url))}')"></div>`;
   if (!t) return `<div class="art-gen" id="art-gen" style="background:var(--surface-2)"><svg class="wave" viewBox="0 0 200 60" preserveAspectRatio="none"><path d="M0 30h200" stroke="var(--muted)" stroke-width="1.5" fill="none"/></svg></div>`;
   const h = hashStr(t.title + t.artist), h1 = h % 360, h2 = (h1 + 40 + (h >> 9) % 80) % 360;
   const words = String(t.title || '?').replace(/[^\p{L}\p{N} ]/gu, ' ').trim().split(/\s+/);
@@ -525,20 +536,26 @@ function queueFootHTML() {
 const FILE_OK = /\.(mp3|m4a|aac|ogg|oga|opus|flac|wav|webm|mp4)$/i;
 function addHTML() {
   const a = addS;
-  const engines = ['Archive.org', config.jamendo && 'Jamendo', config.youtubeSearch && 'YouTube'].filter(Boolean).join(', ');
+  const engines = [config.youtubeSearch && 'YouTube', 'Archive.org', config.jamendo && 'Jamendo'].filter(Boolean).join(', ');
   let h = '';
   if (a.uploads.length) h += `<div class="uploads">${a.uploads.map((u, i) => `<div class="upl" id="upl-${i}"><span>${esc(u.name)}</span><span class="muted num">${u.status}</span><div class="bar"><i style="width:${u.pct}%"></i></div></div>`).join('')}</div>`;
   if (a.archiveItem) h += `<div class="section-head" style="margin-top:12px"><button class="btn ghost sm" data-act="archive-back">← Results</button><span class="muted tiny">${esc(a.archiveItem.title)}</span></div>`;
   if (a.msg) h += `<p class="note">${esc(a.msg)}</p>`;
   if (a.results?.length) {
+    const plats = [...new Set(a.results.map((r) => r.platform).filter(Boolean))];
+    if (plats.length > 1) h += `<div class="src-tabs" role="tablist">${['all', ...plats].map((p) => {
+      const n = p === 'all' ? a.results.length : a.results.filter((r) => r.platform === p).length;
+      return `<button class="chip${p === 'YouTube' ? ' yt-chip' : ''}" role="tab" data-act="src-filter" data-src="${esc(p)}" aria-pressed="${a.src === p}">${p === 'all' ? 'All' : esc(p)} <span class="num">${n}</span></button>`;
+    }).join('')}</div>`;
     if (!isAdmin) h += `<p class="tiny muted res-tip">Press ${ico('play', 12)} to listen on this device first, then <b>Request</b> it. The host decides what plays.</p>`;
     h += `<ul class="list results">${a.results.map((r, i) => {
+      if (a.src !== 'all' && r.platform !== a.src) return '';
       const folder = r.kind === 'archive-item', done = !folder && a.done.has(r.url);
       const btns = folder
         ? `<button class="btn sm" data-act="archive-open" data-id="${esc(r.id)}">Open</button>`
         : done ? `<span class="badge done">${isAdmin ? 'Added' : 'Requested'} ✓</span>`
         : isAdmin
-          ? `<button class="btn sm" data-act="add-res" data-i="${i}" data-mode="next" title="Play next">Next</button><button class="btn sm primary" data-act="add-res" data-i="${i}">Add</button>`
+          ? `<button class="btn sm" data-act="add-res" data-i="${i}" data-mode="next" title="Play after the current track">Play next</button><button class="btn sm primary add-q" data-act="add-res" data-i="${i}" data-mode="end" title="Add to the end of the queue">${ico('plus', 14)}<span>Add to queue</span></button>`
           : `<button class="btn sm primary" data-act="add-res" data-i="${i}">Request</button>`;
       const src = folder ? 'Archive.org' : SOURCE[r.source] || '';
       const sub = [r.artist && esc(r.artist), r.duration && `<span class="num">${fmt(r.duration)}</span>`, r.date && esc(new Date(r.date).toLocaleDateString()), src && `<span class="badge${r.kind === 'youtube' ? ' is-yt' : ''}">${src}</span>`].filter(Boolean).join(' · ');
@@ -959,6 +976,42 @@ function shareFootHTML() {
     ) + `<div class="foot-actions apps">${apps.map(([n, href]) => fbtn(`href="${esc(href)}" target="_blank" rel="noopener"`, '', n, false, 'a')).join('')}</div>`;
 }
 
+// ---------- full-screen player ----------
+// The whole player goes full screen (picture, title, progress and the room's own buttons), so
+// play, pause and seek keep steering every device. iPhones can't full-screen a page element:
+// there the player fills the window instead.
+const playerEl = $('.player');
+let fsTimer = 0;
+const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+function setFs(on) {
+  if (playerEl.classList.contains('is-fs') === on) return;
+  playerEl.classList.toggle('is-fs', on);
+  document.body.classList.toggle('player-fs', on);
+  $('#np-fs').setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+  $('#np-fs').title = on ? 'Exit full screen' : 'Full screen';
+  fsWake();
+  requestAnimationFrame(() => yt.fit());
+}
+function toggleFullscreen() {
+  if (playerEl.classList.contains('is-fs')) {
+    if (fsElement()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else setFs(false);
+    return;
+  }
+  const req = playerEl.requestFullscreen || playerEl.webkitRequestFullscreen;
+  if (!req) return setFs(true);
+  try { Promise.resolve(req.call(playerEl)).catch(() => setFs(true)); } catch { setFs(true); }
+}
+for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => setFs(fsElement() === playerEl));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !fsElement()) setFs(false); });
+// controls fade out while watching, and come back on any movement or tap
+function fsWake() {
+  playerEl.classList.remove('idle');
+  clearTimeout(fsTimer);
+  if (playerEl.classList.contains('is-fs')) fsTimer = setTimeout(() => { if (!S?.playback.paused) playerEl.classList.add('idle'); }, 3000);
+}
+for (const ev of ['pointermove', 'pointerdown', 'keydown']) playerEl.addEventListener(ev, fsWake, { passive: true });
+
 // ---------- progress loop ----------
 const seekEl = $('#seek');
 function frame() {
@@ -1077,6 +1130,7 @@ const actions = {
   requeue: (d) => run(async () => { await api('POST', R('/requeue'), { trackId: Number(d.id), mode: d.mode || 'end' }); toast('Added to the queue'); }),
   sug: (d) => run(() => api('POST', R(`/suggestions/${d.id}/${d.a}`), { mode: d.mode || 'end' })),
   mode: (d) => { addS.mode = d.mode; renderBody(true); },
+  'src-filter': (d) => { addS.src = d.src; renderBody(true); },
   'add-res': (d) => {
     const r = addS.results[Number(d.i)];
     addTrack({ ...r }, d.mode).then((ok) => {
@@ -1095,6 +1149,7 @@ const actions = {
   }),
   'archive-back': () => { addS.results = addS.archiveItem?.back || null; addS.archiveItem = null; renderBody(true); },
   layout: (d) => run(() => api('POST', R('/layout'), { layout: d.layout })),
+  fullscreen: () => toggleFullscreen(),
   'cal-start': () => runCalibration(),
   'cal-apply': () => applyCalibration(),
   'cal-discard': () => { cal = { phase: 'idle' }; paintCal(); },
@@ -1284,14 +1339,18 @@ function searchAll(q) {
   const qs = encodeURIComponent(q);
   return searchRun(async () => {
     addS.archiveItem = null;
+    addS.src = 'all';
     const jobs = [
-      api('GET', `/api/search/audius?q=${qs}`),
-      config.youtubeSearch && api('GET', `/api/search/youtube?q=${qs}`),
-      config.jamendo && api('GET', `/api/search/jamendo?q=${qs}`),
-      api('GET', `/api/search/archive?q=${qs}`).then((r) => r.map((x) => ({ ...x, kind: 'archive-item' }))),
+      config.youtubeSearch && ['YouTube', api('GET', `/api/search/youtube?q=${qs}`)],
+      ['Audius', api('GET', `/api/search/audius?q=${qs}`)],
+      config.jamendo && ['Jamendo', api('GET', `/api/search/jamendo?q=${qs}`)],
+      ['Archive.org', api('GET', `/api/search/archive?q=${qs}`).then((r) => r.map((x) => ({ ...x, kind: 'archive-item' })))],
     ].filter(Boolean);
-    const got = await Promise.allSettled(jobs);
-    addS.results = got.flatMap((g) => (g.status === 'fulfilled' ? g.value : []));
+    const got = await Promise.allSettled(jobs.map(([, p]) => p));
+    // one from each platform in turn, so every platform shows near the top of "All"
+    const lists = got.map((g, k) => (g.status === 'fulfilled' ? g.value : []).map((r) => ({ ...r, platform: jobs[k][0] })));
+    addS.results = [];
+    for (let i = 0; lists.some((l) => i < l.length); i++) for (const l of lists) if (i < l.length) addS.results.push(l[i]);
     const failed = got.find((g) => g.status === 'rejected');
     if (!addS.results.length && failed) throw failed.reason;
   });
@@ -1386,6 +1445,7 @@ function checkAudio() {
 const wakeAudio = () => {
   if (!joined) return;
   engine.unlock().then(checkAudio).catch(() => {});
+  yt.kick(); // a YouTube video the phone refused to autoplay starts with this tap
   keepAwake();
 };
 document.addEventListener('pointerdown', wakeAudio, true);
@@ -1469,4 +1529,4 @@ function fatal(msg) {
 })();
 
 // Handy for debugging from the browser console: syncwave.engine.errMs, syncwave.clock.offset …
-window.syncwave = { engine, clock, yt, get state() { return S; } };
+window.syncwave = { engine, clock, yt, vid, get state() { return S; } };

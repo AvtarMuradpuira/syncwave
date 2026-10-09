@@ -7,7 +7,7 @@ return [
 
     // Optional search sources. Audius and Archive.org work without any key.
     'JAMENDO_CLIENT_ID' => '',   // free at https://devportal.jamendo.com
-    'YOUTUBE_API_KEY' => '',     // pasting YouTube links works without it
+    'YOUTUBE_API_KEY' => '',     // optional: YouTube search works without it; a key uses the official API
 
     // Allow links to LAN addresses (e.g. a NAS). Off by default to prevent
     // server-side request forgery.

@@ -16,7 +16,9 @@ The earlier Node.js version (WebSocket server) is kept in the git tag [`node-edi
 2. Make `data/` and `media/` writable (permission 755 or 775; 777 only if your host asks for it).
 3. Open `https://your-site.com/music/`. The database is created on first use.
 
-Optional: edit `config.php` for the upload limit and the Jamendo / YouTube search keys.
+Optional: edit `config.php` for the upload limit and the Jamendo key. YouTube search works without a key (an optional `YOUTUBE_API_KEY` switches it to Google's official API).
+
+**Video:** YouTube videos play inside the player cover in their lowest quality (switching to full quality in full screen), and the room's buttons control them on every device. Video files (mp4, webm) show their picture synced to the room clock while the sound goes through the speakers' channel roles. The full-screen button on the cover opens the player with its controls over the video.
 
 **After changing any file, run `php stamp.php` before uploading.** It gives every CSS/JS link a new `?v=` number. Without it, browsers and CDNs (such as Hostinger's) can keep serving the old CSS and JS for days, which breaks the layout.
 

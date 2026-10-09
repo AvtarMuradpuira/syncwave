@@ -8,8 +8,8 @@
   <link rel="icon" href="brand/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="brand/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
-  <link rel="manifest" href="manifest.webmanifest?v=20261009063528">
-  <link rel="stylesheet" href="style.css?v=20261009063528">
+  <link rel="manifest" href="manifest.webmanifest?v=20261009064805">
+  <link rel="stylesheet" href="style.css?v=20261009064805">
 </head>
 <body class="room">
   <header class="topbar">
@@ -33,7 +33,13 @@
     <div class="stage">
       <main class="canvas" aria-label="Now playing">
         <div class="player">
-          <div class="np-art" id="np-art"><div class="art-gen" id="art-gen"></div><div class="yt" id="yt" hidden></div></div>
+          <div class="np-art" id="np-art"><div class="art-gen" id="art-gen"></div>
+            <div class="vid" id="vid" hidden><video muted playsinline preload="auto"></video></div>
+            <div class="yt" id="yt" hidden></div>
+            <button type="button" class="np-fs" id="np-fs" data-act="fullscreen" aria-label="Full screen" title="Full screen">
+              <svg viewBox="0 0 24 24" class="fs-open"><path d="M4 4h6v2H6v4H4zm10 0h6v6h-2V6h-4zM4 14h2v4h4v2H4zm14 0h2v6h-6v-2h4z"/></svg>
+              <svg viewBox="0 0 24 24" class="fs-close"><path d="M8 4h2v6H4V8h4zm6 0h2v4h4v2h-6zM4 14h6v6H8v-4H4zm10 0h6v2h-4v4h-2z"/></svg>
+            </button></div>
           <div class="np-meta">
             <span class="badge" id="np-source"></span>
             <h2 id="np-title">Nothing playing</h2>
@@ -93,6 +99,6 @@
 
   <div class="drop-hint" aria-hidden="true">Drop audio files or links to add them</div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="js/app.js?v=20261009063528"></script>
+  <script type="module" src="js/app.js?v=20261009064805"></script>
 </body>
 </html>

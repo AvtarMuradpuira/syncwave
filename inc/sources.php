@@ -71,7 +71,7 @@ function abs_url(string $loc, string $base): string
  * One HTTP request, no redirects followed. $o:
  *   headers: string[]   timeout: seconds
  *   sink: 'string' (keep body, up to max) | 'head' (keep first `max` bytes, then stop) | resource (write to file, abort past max)
- *   max: byte limit
+ *   max: byte limit       post: request body (sends a POST)
  */
 function http_hop(string $url, array $o): array
 {
@@ -118,6 +118,7 @@ function http_hop(string $url, array $o): array
             return $n;
         },
     ]);
+    if (isset($o['post'])) curl_setopt($ch, CURLOPT_POSTFIELDS, $o['post']);
     if ($ip !== null) curl_setopt($ch, CURLOPT_RESOLVE, [$p['host'] . ':' . $port . ':' . (strpos($ip, ':') !== false ? "[$ip]" : $ip)]);
     $ok = curl_exec($ch);
     $err = curl_errno($ch) ? curl_error($ch) : '';
@@ -376,13 +377,59 @@ function youtube_info(string $id): array
 function youtube_search(string $q): array
 {
     $key = cfg('YOUTUBE_API_KEY');
-    if (!$key) throw new SourceError('YouTube search needs YOUTUBE_API_KEY in config.php. You can still paste YouTube links.', 501);
-    $j = get_json('https://www.googleapis.com/youtube/v3/search?' . http_build_query(['part' => 'snippet', 'type' => 'video', 'maxResults' => 20, 'q' => $q, 'key' => $key]));
+    if ($key) {
+        try {
+            $j = get_json('https://www.googleapis.com/youtube/v3/search?' . http_build_query(['part' => 'snippet', 'type' => 'video', 'maxResults' => 20, 'q' => $q, 'key' => $key]));
+            $out = [];
+            foreach ($j['items'] ?? [] as $i) {
+                $out[] = [
+                    'kind' => 'youtube', 'source' => 'youtube', 'title' => decode_xml($i['snippet']['title'] ?? ''), 'artist' => decode_xml($i['snippet']['channelTitle'] ?? ''),
+                    'url' => 'https://www.youtube.com/watch?v=' . ($i['id']['videoId'] ?? ''), 'image' => $i['snippet']['thumbnails']['medium']['url'] ?? ($i['snippet']['thumbnails']['default']['url'] ?? null),
+                ];
+            }
+            return $out;
+        } catch (Throwable $e) {} // quota used up or bad key: fall back to the keyless search
+    }
+    return youtube_search_web($q);
+}
+
+// No API key needed: the same search request youtube.com's own page makes.
+function youtube_search_web(string $q): array
+{
+    $body = json_encode([
+        'context' => ['client' => ['clientName' => 'WEB', 'clientVersion' => '2.20250101.00.00', 'hl' => 'en', 'gl' => 'US']],
+        'query' => $q,
+        'params' => 'EgIQAQ==', // videos only
+    ]);
+    $r = safe_request('https://www.youtube.com/youtubei/v1/search?prettyPrint=false', [
+        'post' => $body, 'timeout' => 15,
+        'headers' => ['Content-Type: application/json', 'Accept: application/json', 'Cookie: SOCS=CAI', 'X-Youtube-Client-Name: 1', 'X-Youtube-Client-Version: 2.20250101.00.00'],
+    ]);
+    if ($r['status'] < 200 || $r['status'] >= 300) throw new SourceError("YouTube search isn't available right now (" . $r['status'] . '). You can still paste YouTube links.', 502);
+    $j = json_decode($r['body'], true);
+    if (!is_array($j)) throw new SourceError("YouTube search isn't available right now. You can still paste YouTube links.", 502);
+    $found = [];
+    $walk = function ($n) use (&$walk, &$found) {
+        if (!is_array($n) || count($found) >= 20) return;
+        if (isset($n['videoRenderer']['videoId'])) { $found[] = $n['videoRenderer']; return; }
+        foreach ($n as $v) if (is_array($v)) $walk($v);
+    };
+    $walk($j);
+    $text = fn($t) => $t['simpleText'] ?? implode('', array_map(fn($x) => $x['text'] ?? '', $t['runs'] ?? []));
     $out = [];
-    foreach ($j['items'] ?? [] as $i) {
+    foreach ($found as $v) {
+        $len = $text($v['lengthText'] ?? []);
+        if ($len === '') continue; // live streams and upcoming premieres can't be synced
+        $secs = 0;
+        foreach (explode(':', $len) as $part) $secs = $secs * 60 + (int)$part;
+        $thumbs = $v['thumbnail']['thumbnails'] ?? [];
         $out[] = [
-            'kind' => 'youtube', 'source' => 'youtube', 'title' => decode_xml($i['snippet']['title'] ?? ''), 'artist' => decode_xml($i['snippet']['channelTitle'] ?? ''),
-            'url' => 'https://www.youtube.com/watch?v=' . ($i['id']['videoId'] ?? ''), 'image' => $i['snippet']['thumbnails']['default']['url'] ?? null,
+            'kind' => 'youtube', 'source' => 'youtube',
+            'title' => $text($v['title'] ?? []) ?: 'YouTube video',
+            'artist' => $text($v['ownerText'] ?? ($v['longBylineText'] ?? [])),
+            'url' => 'https://www.youtube.com/watch?v=' . $v['videoId'],
+            'duration' => $secs ?: null,
+            'image' => $thumbs ? preg_replace('/\?.*$/', '', end($thumbs)['url']) : null,
         ];
     }
     return $out;
