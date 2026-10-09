@@ -58,7 +58,8 @@ Every open device makes about one small request per second. A typical shared hos
 index.html       start page: Host a room / Join a room, Guide
 room.html        the room (player, queue, speakers, requests)
 style.css, js/   front end (js/poll.js is the live connection)
-brand/           logo, app icons, social image
+brand/           logo, app icons, social image (used by the pages)
+assets/img/      original brand pack: logos, icons, social and wallpaper images
 manifest.webmanifest   lets phones install it like an app
 api.php          all API routes:  api.php?p=/rooms/CODE/...
 inc/             database, room logic, media sources, audio probing
