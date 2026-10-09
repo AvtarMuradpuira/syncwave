@@ -1,17 +1,12 @@
-node_modules/
-/data/
-# local settings may hold API keys (see deploy/env.example)
-.env
+# keep the folders and their protection files, never the database or audio
+data/*
+!data/.htaccess
+!data/index.html
+media/*
+!media/.htaccess
+!media/index.html
+
 *.log
 *.zip
-
-# PHP edition: keep the folders and their protection files, never the database or audio
-php/data/*
-!php/data/.htaccess
-!php/data/index.html
-php/media/*
-!php/media/.htaccess
-!php/media/index.html
-
 # Windows shortcuts are machine-specific
 *.lnk

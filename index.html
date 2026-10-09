@@ -1,94 +1,119 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SyncWave</title>
-<meta name="description" content="Choose which SyncWave server to open: the PHP edition or the Node.js edition.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233ddc97'/%3E%3Cpath d='M5 16h3l2-6 3 12 3-15 3 18 3-12 2 3h3' fill='none' stroke='%2306261a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<style>
-  /* Start page: pick the PHP edition (this host) or the Node.js edition (Render). */
-  :root {
-    --bg: #f4f3ef; --surface: #ffffff; --text: #17191c; --muted: #646a72; --line: #d9d6cc;
-    --accent: #0b7a5f; --accent-ink: #ffffff; --accent-soft: #d5efe5;
-    --shadow: 0 1px 2px rgb(0 0 0 / .06), 0 8px 24px rgb(0 0 0 / .06);
-    color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0e1012; --surface: #16191c; --text: #e8ebee; --muted: #8e959d; --line: #2a3036;
-      --accent: #3ddc97; --accent-ink: #06261a; --accent-soft: #143528;
-      --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0e1012; --surface: #16191c; --text: #e8ebee; --muted: #8e959d; --line: #2a3036;
-    --accent: #3ddc97; --accent-ink: #06261a; --accent-soft: #143528;
-    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
-    color-scheme: dark;
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    background: var(--bg); color: var(--text);
-    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    display: grid; place-items: center; padding: 24px 16px;
-  }
-  main { width: 100%; max-width: 720px; }
-  header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  header svg { width: 40px; height: 40px; flex: none; }
-  h1 { font-size: 28px; line-height: 1.2; margin: 0; letter-spacing: -.01em; }
-  .lead { color: var(--muted); margin: 0 0 24px; }
-  .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-  .choice {
-    display: flex; flex-direction: column; gap: 8px; padding: 20px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
-    box-shadow: var(--shadow); color: inherit; text-decoration: none;
-    transition: border-color .15s, transform .15s;
-  }
-  .choice:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .choice:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-  .tag {
-    align-self: flex-start; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
-    color: var(--accent); background: var(--accent-soft); padding: 2px 10px; border-radius: 99px;
-  }
-  .choice h2 { font-size: 20px; margin: 4px 0 0; }
-  .choice p { margin: 0; color: var(--muted); font-size: 15px; }
-  .choice .go {
-    margin-top: auto; padding-top: 12px; display: inline-flex; align-items: center; justify-content: center;
-    min-height: 44px; border-radius: 99px; background: var(--accent); color: var(--accent-ink); font-weight: 600;
-  }
-  .note { color: var(--muted); font-size: 14px; margin: 20px 0 0; text-align: center; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050818">
+  <title>SyncWave</title>
+  <meta name="description" content="Play music in sync on every phone, laptop and speaker.">
+  <meta property="og:title" content="SyncWave: play together">
+  <meta property="og:description" content="Play music in sync on every phone, laptop and speaker.">
+  <meta property="og:image" content="brand/social.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="brand/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="brand/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<main>
-  <header>
-    <svg viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="8" fill="#3ddc97"/>
-      <path d="M5 16h3l2-6 3 12 3-15 3 18 3-12 2 3h3" fill="none" stroke="#06261a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <h1>SyncWave</h1>
+<body class="home-page">
+  <header class="topbar">
+    <a href="./" class="brand"><img src="brand/icon-192.webp" alt="" width="30" height="30"><span>SyncWave</span></a>
+    <span class="grow-x"></span>
+    <button class="btn ghost guide-btn" type="button" data-open="guide">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 15.5a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Zm1.3-5.1c-.6.4-.8.6-.8 1.1v.4h-2v-.5c0-1.3.7-1.9 1.4-2.4.6-.4.9-.7.9-1.2 0-.7-.6-1.1-1.3-1.1-.8 0-1.4.5-1.5 1.3l-2-.2C8.2 8.1 9.8 6.8 12 6.8c2.1 0 3.6 1.2 3.6 2.9 0 1.3-.8 2-2.3 2.7Z"/></svg>
+      Guide
+    </button>
   </header>
-  <p class="lead">Synchronized audio across phones, laptops and speakers. Choose which server to use.</p>
 
-  <div class="choices">
-    <a class="choice" href="php/">
-      <span class="tag">PHP</span>
-      <h2>PHP edition</h2>
-      <p>Runs on this website's PHP hosting. Devices update about once a second.</p>
-      <span class="go">Open PHP app</span>
-    </a>
-    <a class="choice" href="https://syncwave-7lwo.onrender.com/r/gvd5vu">
-      <span class="tag">Node.js</span>
-      <h2>Node.js edition</h2>
-      <p>Runs on Render with live WebSocket updates for the tightest sync.</p>
-      <span class="go">Open Node.js app</span>
-    </a>
+  <main class="home">
+    <div class="home-hero">
+      <img class="home-mark" src="brand/icon-512.webp" alt="" width="150" height="150">
+      <h1><img class="home-word" src="brand/wordmark.webp" alt="SyncWave" width="470" height="86"></h1>
+      <div class="home-tag">Play together</div>
+      <p class="muted">Play music in sync on every phone, laptop and speaker.</p>
+    </div>
+    <div class="home-actions">
+      <button class="btn primary big" type="button" data-open="create">Host a room</button>
+      <button class="btn big" type="button" data-open="join">Join a room</button>
+    </div>
+  </main>
+
+  <!-- host a room -->
+  <div class="overlay" data-sheet="create" hidden>
+    <form class="card sheet" id="create" role="dialog" aria-modal="true" aria-labelledby="create-title">
+      <div class="sheet-head"><h2 id="create-title">Host a room</h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7l-1.4-1.4L9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/></svg></button></div>
+      <p class="muted">You control playback, the queue and speaker roles.</p>
+      <label class="field"><span>Room name</span><input name="name" maxlength="60" placeholder="Friday night" required></label>
+      <button class="btn primary wide">Create room</button>
+    </form>
   </div>
 
-  <p class="note">The Node.js server sleeps when idle on Render's free plan, so it can take up to a minute to open the first time.</p>
-</main>
+  <!-- join a room -->
+  <div class="overlay" data-sheet="join" hidden>
+    <div class="card sheet" role="dialog" aria-modal="true" aria-labelledby="join-title">
+      <div class="sheet-head"><h2 id="join-title">Join a room</h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7l-1.4-1.4L9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/></svg></button></div>
+      <form id="join">
+        <label class="field"><span>Room code or link</span><input name="code" maxlength="200" placeholder="abc234" autocapitalize="off" autocomplete="off" spellcheck="false" required class="num"></label>
+        <button class="btn primary wide">Join</button>
+      </form>
+      <section class="sessions" id="sessions" hidden>
+        <h3>Your rooms</h3>
+        <div id="session-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- guide: one step at a time -->
+  <div class="overlay" data-sheet="guide" hidden>
+    <div class="card sheet guide" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+      <div class="sheet-head"><h2 id="guide-title">Guide <span class="g-count num" id="g-count"></span></h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7l-1.4-1.4L9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3z"/></svg></button></div>
+      <div class="g-steps">
+        <section class="g-step">
+          <div class="g-icon">🔊</div>
+          <h3>What SyncWave does</h3>
+          <p>It turns phones, laptops and speakers into one synchronized sound system. Every device plays the same queue at the same moment, and each one can play its own channel: left, right, center, subwoofer or surrounds.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">🏠</div>
+          <h3>1. Host a room</h3>
+          <p>On the device that will control the music, tap <b>Host a room</b> and give it a name. As the host you control play, pause, skipping, the queue and every speaker. The host link is saved on this device, so you can come back to it.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">📲</div>
+          <h3>2. Invite devices</h3>
+          <p>In the room, tap <b>Share</b> to show a QR code, the 6-character room code and the link. On every other device, scan the QR code or tap <b>Join a room</b> and type the code.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">👆</div>
+          <h3>3. Join with sound</h3>
+          <p>Each device taps <b>Join with sound</b> once (browsers need a tap before they play audio). Keep the page open: phones may pause audio when the screen locks.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">🎛️</div>
+          <h3>4. Set up the speakers</h3>
+          <p>Open <b>Speakers</b> to see the room map. Pick a layout (2.0, 2.1, 3.1, 5.1 or 7.1) and assign each device a role, or use auto-assign. <b>Calibrate</b> uses the host's microphone to line every speaker up, including Bluetooth delay.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">🎵</div>
+          <h3>5. Add music</h3>
+          <p>Upload files, paste links, or search podcasts, Archive.org, Audius, Jamendo and YouTube. Listeners can preview a song and send a request; only the host sees it and approves or rejects it.</p>
+        </section>
+        <section class="g-step" hidden>
+          <div class="g-icon">💾</div>
+          <h3>6. Pick up later</h3>
+          <p>The queue, play history, speakers and playlists are saved. Reopen a room from <b>Join a room → Your rooms</b>, or reload the page: you go straight back in.</p>
+        </section>
+      </div>
+      <div class="g-foot">
+        <button class="btn" type="button" id="g-back">Back</button>
+        <div class="g-dots" id="g-dots" aria-hidden="true"></div>
+        <button class="btn primary" type="button" id="g-next">Next</button>
+        <button class="btn primary" type="button" id="g-host" data-open="create" hidden>Host a room</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/home.js"></script>
 </body>
 </html>
